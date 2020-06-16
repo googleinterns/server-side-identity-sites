@@ -1,0 +1,34 @@
+<html lang="en">
+  <head>
+      <style>
+      .button {
+        background-color: #000000;
+        border: none;
+        color: white;
+        padding: 20px 34px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+      .button:hover {
+      background-color: #FFFFFF;
+      color: black;
+      }
+    </style>
+  </head>
+  <body style="background-color:powderblue;">
+    <h1>Existing User Login</h1>
+      <form  method="post" action="http://localhost:5000/login-user">
+          <label for="lname">Username:</label><br>
+          <input type="text" id="usr" name="usr"><br>
+          <label for="lname">Password (Super Scure):</label><br>
+          <input type="text" id="passwrd" name="passwrd"><br><br>
+          <input type="submit" value="Submit Form">
+      </form>
+      <a href="http://localhost:5000/register" class="button">Register New Account Instead</a>
+  </body>
+</html>
+

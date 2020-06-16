@@ -1,0 +1,43 @@
+<html lang="en">
+  <head>
+      <style>
+      .button {
+        background-color: #000000;
+        border: none;
+        color: white;
+        padding: 20px 34px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+      .button:hover {
+      background-color: #FFFFFF;
+      color: black;
+      }
+    </style>
+  </head>
+  <body style="background-color:powderblue;">
+    <h1>Registration Error</h1>
+    <h2>The provided username is already linked to a registred account. Please provide another username.</h2>
+      <form  method="post" action="http://localhost:5000/register-user">
+          <label for="fname">First Name:</label><br>
+          <input type="text" id="fname" name="fname"><br>
+          <label for="lname">Last Name:</label><br>
+          <input type="text" id="lname" name="lname"><br>
+          <label for="usr">Username:</label><br>
+          <input type="text" id="usr" name="usr"><br>
+          <label for="passwrd">Password (Super Scure):</label><br>
+          <input type="text" id="passwrd" name="passwrd"><br>
+          <label for="email">Email:</label><br>
+          <input type="text" id="email" name="email"><br>
+          <label for="state">City:</label><br>
+          <input type="text" id="state" name="state"><br><br>
+          <input type="submit" value="Submit Form">
+      </form>
+      <a href="http://localhost:5000/login" class="button">Sign In Existing User Instead</a>
+  </body>
+</html>
+
