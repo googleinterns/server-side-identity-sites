@@ -1,17 +1,17 @@
 <html lang="en">
   <head>
-      <link href="style.css" rel="stylesheet">
+      <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
   <body style="background-color:powderblue;">
     <h1>Existing User Login</h1>
-      <form  method="post" action="http://localhost:5000/login-user">
+      <form  method="post" action={{url_for('login_existing_user')}}>
           <label for="lname">Username:</label><br>
           <input type="text" id="usr" name="usr"><br>
           <label for="lname">Password (Super Scure):</label><br>
           <input type="text" id="passwrd" name="passwrd"><br><br>
           <input type="submit" value="Submit Form">
       </form>
-      <a href="http://localhost:5000/register" class="button">Register New Account Instead</a>
+      <a href={{url_for('display_register')}} class="button">Register New Account Instead</a>
   </body>
 </html>
 

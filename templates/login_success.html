@@ -1,9 +1,9 @@
 <html lang="en">
 	<head>
-        <link href="style.css" rel="stylesheet">
+        <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
     </head>
 	<body style="background-color:powderblue;">
 		<h1>Login was successful! Welcome back, {{name}}!</h1>
-        <a href="http://localhost:5000" class="button">Log Out</a>
+        <a href={{url_for('home_page')}} class="button">Log Out</a>
 	</body>
 </html>

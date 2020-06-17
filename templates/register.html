@@ -1,10 +1,10 @@
 <html lang="en">
   <head>
-      <link href="style.css" rel="stylesheet">
+      <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
   <body style="background-color:powderblue;">
     <h1>New User Registration</h1>
-      <form  method="post" action="http://localhost:5000/register-user">
+      <form  method="post" action={{url_for('register_new_user')}}>
           <label for="fname">First Name:</label><br>
           <input type="text" id="fname" name="fname"><br>
           <label for="lname">Last Name:</label><br>
@@ -19,7 +19,7 @@
           <input type="text" id="state" name="state"><br><br>
           <input type="submit" value="Submit Form">
       </form>
-      <a href="http://localhost:5000/login" class="button">Sign In Existing User Instead</a>
+      <a href={{url_for('display_login')}} class="button">Sign In Existing User Instead</a>
   </body>
 </html>
 
