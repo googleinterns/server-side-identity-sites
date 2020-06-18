@@ -3,7 +3,12 @@
       <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
   <body style="background-color:powderblue;">
-    <h1>Existing User Login</h1>
+      {% if login_error %}
+      <h1>Login Error</h1>
+      <h2>{{login_error}}</h2>
+      {% else %}
+      <h1>Exisitng User Sign In</h1>
+      {% endif %}
       <form  method="post" action={{url_for('login_existing_user')}}>
           <label for="lname">Username:</label><br>
           <input type="text" id="usr" name="usr"><br>

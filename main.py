@@ -100,12 +100,14 @@ def register_new_user():
     if registered_email:
         #send them back to a login/registration page
         print("Reg Failed: Existing Email")
-        return render_template('register_existing_email.html')
+        error_message = "The provided email is already linked to a registred account. Please provide another email."
+        return render_template('register.html', reg_error=error_message)
     
     if registered_username:
         #send them back to a login/registration page
         print("Reg Failed: Existing Username")
-        return render_template('register_existing_username.html')
+        error_message = "The provided username is already linked to a registred account. Please provide another username."
+        return render_template('register.html', reg_error=error_message)
         
     else:
         print("Registering New User")
@@ -131,13 +133,15 @@ def login_existing_user():
     create_user_table()
     registered_username = is_username_registered(username)
     if not registered_username:
-        return render_template('login_missing_username.html')
+        error_message = "The given username is not associated with any registered account. Please provide a registered username."
+        return render_template('login.html', login_error=error_message)
     
     correct_password = is_password_correct(username, password)
     if correct_password:
         first_name = get_first_name(username)
         return render_template('login_success.html', name=first_name)
     
-    return render_template('incorrect_password.html')
+    error_message = "The given password for the specified account is incorrect."
+    return render_template('login.html', login_error=error_message)
         
     
