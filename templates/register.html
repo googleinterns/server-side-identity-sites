@@ -1,31 +1,31 @@
 <html lang="en">
   <head>
-      <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
   <body style="background-color:powderblue;">
-      {% if reg_error %}
+    {% if reg_error %}
       <h1>Registration Error</h1>
       <h2>{{reg_error}}</h2>
-      {% else %}
+    {% else %}
       <h1>New User Registration</h1>
-      {% endif %}
+    {% endif %}
       
-      <form  method="post" action={{url_for('register_new_user')}}>
-          <label for="fname">First Name:</label><br>
-          <input type="text" id="fname" name="fname"><br>
-          <label for="lname">Last Name:</label><br>
-          <input type="text" id="lname" name="lname"><br>
-          <label for="usr">Username:</label><br>
-          <input type="text" id="usr" name="usr"><br>
-          <label for="passwrd">Password (Super Scure):</label><br>
-          <input type="text" id="passwrd" name="passwrd"><br>
-          <label for="email">Email:</label><br>
-          <input type="text" id="email" name="email"><br>
-          <label for="state">City:</label><br>
-          <input type="text" id="state" name="state"><br><br>
-          <input type="submit" value="Submit Form">
-      </form>
-      <a href={{url_for('display_login')}} class="button">Sign In Existing User Instead</a>
+    <form  method="post" action={{url_for('register_new_user')}}>
+      <label for="fname">First Name:</label><br>
+      <input type="text" id="fname" name="fname"><br>
+      <label for="lname">Last Name:</label><br>
+      <input type="text" id="lname" name="lname"><br>
+      <label for="usr">Username:</label><br>
+      <input type="text" id="usr" name="usr"><br>
+      <label for="passwrd">Password (Super Scure):</label><br>
+      <input type="text" id="passwrd" name="passwrd"><br>
+      <label for="email">Email:</label><br>
+      <input type="text" id="email" name="email"><br>
+      <label for="state">City:</label><br>
+      <input type="text" id="state" name="state"><br><br>
+      <input type="submit" value="Submit Form">
+    </form>
+    <a href={{url_for('display_login')}} class="button">Sign In Existing User Instead</a>
   </body>
 </html>
 
