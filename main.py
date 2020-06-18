@@ -22,14 +22,14 @@ def close_db(conn):
 def create_user_table():
     """Creates a 'users' table in our database IF ONE DOES NOT ALREADY EXIST.  Does nothing otherwise."""
     conn, c = open_db()
-    c.execute('''CREATE TABLE IF NOT EXISTS users (given_name text, family_name text, email text, state text,                                                               username text, password text);''')
+    c.execute('''CREATE TABLE IF NOT EXISTS users (given_name text, family_name text, email text, state text, username text, password text);''')
     close_db(conn)
 
 
 def insert_user(given_name, family_name, email, state, username, password):
     """Inserts a user into the 'users' table of the database"""
     conn, c = open_db()
-    c.execute('''INSERT INTO users VALUES (?,?,?,?,?,?);''', (given_name, family_name, email, state, username,                                                                      password))
+    c.execute('''INSERT INTO users VALUES (?,?,?,?,?,?);''', (given_name, family_name, email, state, username, password))
     close_db(conn)
 
 
