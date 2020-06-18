@@ -1,14 +1,14 @@
 from flask import Flask, request, render_template, url_for
 import sqlite3
 
+_DB = './database.db'
+_CLIENT_ID = "443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
 app = Flask(__name__)
-DB = './database.db'
-CLIENT_ID = "443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
 
 
 def open_db():
     """Opens a database connection for editing"""
-    conn = sqlite3.connect(DB)
+    conn = sqlite3.connect(_DB)
     c = conn.cursor()
     return (conn, c)
 
