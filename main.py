@@ -1,4 +1,6 @@
 from flask import Flask, request, render_template, url_for
+from google.auth.transport import requests
+from google.oauth2 import id_token
 import sqlite3
 
 _DB = './database.db'
@@ -55,16 +57,29 @@ def is_password_correct(username, password):
     conn, c = open_db()
     stored_password = c.execute('''SELECT password FROM users WHERE username=?;''', (username,)).fetchone()
     close_db(conn)
-    print(stored_password)
     return password == stored_password[0]
 
 
-def get_first_name(username):
-    """Gets the first name of the user with the given username. The username must be in the database"""
+def create_federated_user_table():
+    """Creates a 'federated_users' table in our database IF ONE DOES NOT ALREADY EXIST.  Does nothing otherwise."""
     conn, c = open_db()
-    name = c.execute('''SELECT given_name FROM users WHERE username=?;''', (username,)).fetchone()
+    c.execute('''CREATE TABLE IF NOT EXISTS federated_users (given_name text, family_name text, email text, state text, username text);''')
     close_db(conn)
-    return name[0]
+
+
+def insert_federated_user(given_name, family_name, email, state, username="NULL"):
+    """Inserts a user into the 'federated_users' table of the database"""
+    conn, c = open_db()
+    c.execute('''INSERT INTO federated_users VALUES (?,?,?,?,?,?);''', (given_name, family_name, email, state, username))
+    close_db(conn)
+
+    
+def is_federated_email_registered(email):
+    """Determines if a given email is already registered in our federated database"""
+    conn, c = open_db()
+    user_email = c.execute('''SELECT * FROM federated_users WHERE email=?;''', (email,)).fetchone()
+    close_db(conn)
+    return user_email != None
 
 
 @app.route('/', methods=['GET'])
@@ -97,6 +112,12 @@ def register_new_user():
     registered_email = is_email_registered(email)
     registered_username = is_username_registered(username)
     
+    if username == "NULL" or username == "":
+        #do not accept NULL or empty username. send them back to login/registration page
+        print("Reg Failed: NULL or empty username")
+        error_message = "Username cannot be NULL or empty"
+        return render_template('register.html', reg_error=error_message)
+        
     if registered_email:
         #send them back to a login/registration page
         print("Reg Failed: Existing Email")
@@ -143,5 +164,59 @@ def login_existing_user():
     
     error_message = "The given password for the specified account is incorrect."
     return render_template('login.html', login_error=error_message)
+
+
+@app.route('/onetap-token', methods=['POST'])
+def handle_onetap():
+    """Handle signing in when Google sends the token to our server directly"""
+    print('Handling User Request from OneTap')
+    #Verify CSRF double submit cookie
+    csrf_token_cookie = request.cookies.get('g_csrf_token')
+    if not csrf_token_cookie:
+        return render_template('home.html', error="Google Sign In failed. No CSRF token in provided cookie.")
+    
+    csrf_token_body = request.values.get('g_csrf_token')
+    if not csrf_token_body:
+        return render_template('home.html', error="Google Sign In failed. No CSRF token in post body.")
+    
+    if csrf_token_body != csrf_token_cookie:
+        return render_template('home.html', error="Google Sign In failed. Failed to verify double submit cookie.")
+
+    token = request.values.get('credential')
+    user_info = verify_id_token(token, _CLIENT_ID)
+    print(str(user_info))
+    if not user_info:
+        return render_template('home.html', error="Google Sign In failed. The ID Token was invalid.")
+    
+    return render_template('registration_success.html', name=user_info['sub'])
+    
+    #TODO: logic for sign in from GSI
+    """ 
+    create_user_table()
+    registered = is_email_registered(user_info['email'])
+    if registered:
+        return render_template('returning_user.html', name=user_info['given_name'])
+    else:
+        user_id = user_info['sub']
+        given_name = user_info['given_name']
+        family_name = user_info['family_name']
+        email = user_info['email']
+        insert_user(user_id, given_name, family_name, email) 
+        return render_template('new_user.html', name=given_name)
+    """
+
+    
+def verify_id_token(token, client_id):
+    """Verify that a given id_token is valid and return the decoded user information if it is valid"""
+    print("Begin Token Verification")
+    try:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), client_id)
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            raise ValueError("Wrong Issuer")
+
+        return idinfo
+
+    except ValueError:
+        return False
         
     

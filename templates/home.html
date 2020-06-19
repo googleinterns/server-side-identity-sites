@@ -1,11 +1,22 @@
 <html lang="en">
   <head>
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body style="background-color:powderblue;">
-    <h1>Demo Website Home Page</h1>
+    {% if error %}
+      <h1>{{error}}</h1>
+    {% else %}
+      <h1>Demo Website Home Page</h1>
+    {% endif %}
     <a href={{url_for('display_register')}} class="button">Sign Up</a>
     <a href={{url_for('display_login')}} class="button">Login</a>
+    <div id="g_id_onload"
+     data-client_id="443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
+     data-context="signin"
+     data-cancel_on_tap_outside="false"
+     data-login_uri="{{url_for('handle_onetap')}}">
+    </div>
   </body>
 </html>
 
