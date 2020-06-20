@@ -1,7 +1,8 @@
+import sqlite3
+
 from flask import Flask, request, render_template, url_for
 from google.auth.transport import requests
 from google.oauth2 import id_token
-import sqlite3
 
 _DB = './database.db'
 _CLIENT_ID = "443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
@@ -58,6 +59,14 @@ def is_password_correct(username, password):
     stored_password = c.execute('''SELECT password FROM users WHERE username=?;''', (username,)).fetchone()
     close_db(conn)
     return password == stored_password[0]
+
+
+def get_first_name(username):
+    """Retrieves the given name of a user in our database with the given username.  Username must be in the db"""
+    conn, c = open_db()
+    first_name = c.execute('''SELECT given_name FROM users WHERE username=?;''', (username,)).fetchone()
+    close_db(conn)
+    return first_name[0]
 
 
 def create_federated_user_table():
