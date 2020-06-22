@@ -1,0 +1,15 @@
+<html lang="en">
+  <head>
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+  </head>
+  <body style="background-color:powderblue;">
+    {% if error %}
+      <h1>{{error}}</h1>
+    {% else %}
+      <h1>New Google Account Detected</h1>
+      <h2>Would you like to link this Google account to an existing user or make a new account?</h2>
+    {% endif %}
+    <a href={{url_for('display_google_registration')}} class="button">Make New Account</a>
+    <a href={{url_for('display_account_link')}} class="button">Link Existing Account</a>
+  </body>
+</html>

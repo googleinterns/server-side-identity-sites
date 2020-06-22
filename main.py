@@ -1,12 +1,14 @@
 import sqlite3
 
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, session, url_for
 from google.auth.transport import requests
 from google.oauth2 import id_token
 
 _DB = './database.db'
 _CLIENT_ID = "443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
+
 app = Flask(__name__)
+app.secret_key = 'super secret string for demo website'
 
 
 def open_db():
@@ -79,7 +81,7 @@ def create_federated_user_table():
 def insert_federated_user(given_name, family_name, email, state, username="NULL"):
     """Inserts a user into the 'federated_users' table of the database"""
     conn, c = open_db()
-    c.execute('''INSERT INTO federated_users VALUES (?,?,?,?,?,?);''', (given_name, family_name, email, state, username))
+    c.execute('''INSERT INTO federated_users VALUES (?,?,?,?,?);''', (given_name, family_name, email, state, username))
     close_db(conn)
 
     
@@ -197,24 +199,78 @@ def handle_onetap():
     if not user_info:
         return render_template('home.html', error="Google Sign In failed. The ID Token was invalid.")
     
-    return render_template('registration_success.html', name=user_info['sub'])
+    email = user_info['email']
+    create_federated_user_table()
+    registered_fed = is_federated_email_registered(email)
+    registered = is_email_registered(email)
     
-    #TODO: logic for sign in from GSI
-    """ 
-    create_user_table()
-    registered = is_email_registered(user_info['email'])
-    if registered:
-        return render_template('returning_user.html', name=user_info['given_name'])
+    if registered_fed:
+        return render_template('login_success.html', name=user_info['given_name'])
+    elif registered:
+        error_message = ("The email associated with this Google account is already registered. " 
+                         "Please link this existing account to your Google account or sign in without Google")
+        return render_template('link_existing_account.html', link_error=error_message)
     else:
-        user_id = user_info['sub']
-        given_name = user_info['given_name']
-        family_name = user_info['family_name']
-        email = user_info['email']
-        insert_user(user_id, given_name, family_name, email) 
-        return render_template('new_user.html', name=given_name)
-    """
+        session['decoded_token'] = user_info
+        return render_template('new_googler.html')
 
+
+@app.route('/new-google-account', methods=['GET'])
+def display_google_registration():
+    """Display the registration page for a new Google account on the site"""
+    return render_template('register_googler.html')
+
+
+@app.route('/register-googler', methods=['POST'])
+def register_new_googler():
+    """Register the new Google account in the federated database using the provided information"""
+    user_info = session['decoded_token']
+    state = request.values.get('state')
+    first_name = user_info['given_name']
+    last_name = user_info['family_name']
+    email = user_info['email']
     
+    create_federated_user_table()
+    insert_federated_user(first_name, last_name, email, state)
+    
+    return render_template('registration_success.html', name=first_name)
+
+
+@app.route('/link-account', methods=['GET'])
+def display_account_link():
+    """Display the account link page for linking an existing account to a Google account"""
+    return render_template('link_existing_account.html')
+
+
+@app.route('/link-login', methods=['POST'])
+def link_existing_user():
+    """Attempt to link an existing account to a Google account"""
+    username = request.values.get('usr')
+    password = request.values.get('passwrd')
+    
+    create_user_table()
+    registered_username = is_username_registered(username)
+    if not registered_username:
+        error_message = "The given username is not associated with any registered account. Please provide a registered username."
+        return render_template('link_existing_account.html', link_error=error_message)
+    
+    correct_password = is_password_correct(username, password)
+    if not correct_password:
+        error_message = "The given password for the specified account is incorrect."
+        return render_template('link_existing_account.html', link_error=error_message)
+
+    user_info = session['decoded_token']
+    state = request.values.get('state')
+    first_name = user_info['given_name']
+    last_name = user_info['family_name']
+    email = user_info['email']
+    
+    create_federated_user_table()
+    insert_federated_user(first_name, last_name, email, state, username)
+    
+    return render_template('link_success.html', name=first_name)
+
+
 def verify_id_token(token, client_id):
     """Verify that a given id_token is valid and return the decoded user information if it is valid"""
     print("Begin Token Verification")
@@ -227,5 +283,3 @@ def verify_id_token(token, client_id):
 
     except ValueError:
         return False
-        
-    

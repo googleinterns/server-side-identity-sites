@@ -1,0 +1,19 @@
+<html lang="en">
+  <head>
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+  </head>
+  <body style="background-color:powderblue;">
+    {% if reg_error %}
+      <h1>Registration Error</h1>
+      <h2>{{reg_error}}</h2>
+    {% else %}
+      <h1>Complete Account Registration</h1>
+    {% endif %}
+      
+    <form  method="post" action={{url_for('register_new_googler')}}>
+      <label for="state">City:</label><br>
+      <input type="text" id="state" name="state"><br><br>
+      <input type="submit" value="Submit Form">
+    </form>
+  </body>
+</html>
