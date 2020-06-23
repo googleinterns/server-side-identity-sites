@@ -144,7 +144,7 @@ def register_new_user():
     else:
         print("Registering New User")
         insert_user(fname, lname, email, state, username, password)
-        return render_template('registration_success.html', name=fname)
+        return render_template('account_success.html', name=fname, registration=str(True))
 
 
 @app.route('/login', methods=['GET'])
@@ -171,7 +171,7 @@ def login_existing_user():
     correct_password = is_password_correct(username, password)
     if correct_password:
         first_name = get_first_name(username)
-        return render_template('login_success.html', name=first_name)
+        return render_template('account_success.html', name=first_name, login=str(True))
     
     error_message = "The given password for the specified account is incorrect."
     return render_template('login.html', login_error=error_message)
@@ -205,7 +205,7 @@ def handle_onetap():
     registered = is_email_registered(email)
     
     if registered_fed:
-        return render_template('login_success.html', name=user_info['given_name'])
+        return render_template('account_success.html', name=user_info['given_name'], login=str(True))
     elif registered:
         error_message = ("The email associated with this Google account is already registered. " 
                          "Please link this existing account to your Google account or sign in without Google")
@@ -233,7 +233,7 @@ def register_new_googler():
     create_federated_user_table()
     insert_federated_user(first_name, last_name, email, state)
     
-    return render_template('registration_success.html', name=first_name)
+    return render_template('account_success.html', name=first_name, registration=str(True))
 
 
 @app.route('/link-account', methods=['GET'])
@@ -268,7 +268,7 @@ def link_existing_user():
     create_federated_user_table()
     insert_federated_user(first_name, last_name, email, state, username)
     
-    return render_template('link_success.html', name=first_name)
+    return render_template('account_success.html', name=first_name, link=str(True))
 
 
 def verify_id_token(token, client_id):

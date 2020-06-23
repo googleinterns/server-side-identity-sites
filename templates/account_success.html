@@ -1,0 +1,17 @@
+<html lang="en">
+  <head>
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+  </head>
+  <body style="background-color:powderblue;">
+    {% if login %}
+      <h1>Login was successful! Welcome back, {{name}}!</h1>
+    {% elif registration %}
+      <h1>Registration was successful! Welcome, {{name}}!</h1>
+    {% elif link %}
+      <h1>Account Link was successful! Welcome back, {{name}}!</h1>
+    {% else %}
+      <h1>Unkown account access event, should never get here</h1>
+    {% endif %}
+    <a href={{url_for('home_page')}} class="button">Log Out</a>
+  </body>
+</html>
