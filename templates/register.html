@@ -7,7 +7,7 @@
       <h1>Registration Error</h1>
       <h2>{{reg_error}}</h2>
     {% else %}
-      <h1>New User Registration</h1>
+      <h1>Account Registration</h1>
     {% endif %}
       
     <form  method="post" action={{url_for('register_new_user')}}>
@@ -21,8 +21,8 @@
       <input type="text" id="passwrd" name="passwrd"><br>
       <label for="state">City:</label><br>
       <input type="text" id="state" name="state"><br><br>
-      <input type="submit" value="Submit Form">
+      <input type="submit" value="Submit">
     </form>
-    <a href={{url_for('display_login')}} class="button">Sign In Existing User Instead</a>
+    <a href={{url_for('display_login')}}>Sign In Instead</a>
   </body>
 </html>
