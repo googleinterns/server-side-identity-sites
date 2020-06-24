@@ -5,11 +5,11 @@
   <body style="background-color:powderblue;">
     <h1>Sign In to Link Account</h1>
     {% if link_error %}
-      <h2>Error: {{link_error}}</h2>
+      <h2>{{link_error}}</h2>
     {% endif %}
     <form  method="post" action={{url_for('link_existing_user')}}>
-      <label for="lname">Username:</label><br>
-      <input type="text" id="usr" name="usr"><br>
+      <label for="email">Email:</label><br>
+      <input type="text" id="email" name="email"><br>
       <label for="lname">Password (Super Scure):</label><br>
       <input type="text" id="passwrd" name="passwrd"><br><br>
       <input type="submit" value="Submit Form">

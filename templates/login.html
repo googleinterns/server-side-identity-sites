@@ -7,12 +7,12 @@
       <h1>Login Error</h1>
       <h2>{{login_error}}</h2>
     {% else %}
-      <h1>Exisitng User Sign In</h1>
+      <h1>User Sign In</h1>
     {% endif %}
     <form  method="post" action={{url_for('login_existing_user')}}>
-      <label for="lname">Username:</label><br>
-      <input type="text" id="usr" name="usr"><br>
-      <label for="lname">Password (Super Scure):</label><br>
+      <label for="email">Email:</label><br>
+      <input type="text" id="email" name="email"><br>
+      <label for="passwrd">Password (Super Secure):</label><br>
       <input type="text" id="passwrd" name="passwrd"><br><br>
       <input type="submit" value="Submit Form">
     </form>
