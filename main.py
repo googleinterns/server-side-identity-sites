@@ -153,8 +153,8 @@ def login_existing_user():
     return render_template('login.html', login_error=error_message)
 
 
-@app.route('/onetap-token', methods=['POST'])
-def handle_onetap():
+@app.route('/gsi-token', methods=['POST'])
+def handle_google_sign_in():
     """Handle signing in when Google sends the token to our server directly"""
     print('Handling User Request from OneTap')
     #Verify CSRF double submit cookie
