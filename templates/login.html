@@ -1,6 +1,8 @@
 <html lang="en">
   <head>
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
   <body style="background-color:powderblue;">
     {% if login_error %}
@@ -9,6 +11,12 @@
     {% else %}
       <h1>User Sign In</h1>
     {% endif %}
+    <div id="g_id_onload"
+     data-client_id="443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
+     data-context="signin"
+     data-cancel_on_tap_outside="false"
+     data-login_uri="{{url_for('handle_onetap')}}">
+    </div>
     <form  method="post" action={{url_for('login_existing_user')}}>
       <label for="email">Email:</label><br>
       <input type="text" id="email" name="email"><br>
