@@ -183,9 +183,10 @@ def handle_google_sign_in():
     if federated:
         return render_template('account_success.html', name=user_info['given_name'], login=str(True))
     elif registered:
+        session['decoded_token'] = user_info
         error_message = ("The email associated with this Google account is already registered. " 
                          "Please link this existing account to your Google account or sign in without Google")
-        return render_template('link_existing_account.html', link_error=error_message)
+        return render_template('link_existing_account.html', link_error=error_message, google_email=email)
     else:
         session['decoded_token'] = user_info
         return render_template('register_googler.html')
@@ -199,7 +200,7 @@ def register_new_googler():
     password = request.values.get('passwrd')
     first_name = user_info['given_name']
     last_name = user_info['family_name']
-    email = user_info['email']
+    email = user_info['email'].lower()
     
     create_user_table()
     insert_user(first_name, last_name, email, state, password, federated=1)
@@ -210,19 +211,19 @@ def register_new_googler():
 @app.route('/link-login', methods=['POST'])
 def link_existing_user():
     """Attempt to link an existing account to a Google account"""
+    user_info = session['decoded_token']
+    token_email = user_info['email'].lower()
     email = request.values.get('email').lower()
     password = request.values.get('passwrd')
     
-    create_user_table()
-    registered_email = is_email_registered(email)
-    if not registered_email:
-        error_message = "The given email is not associated with any registered account. Please provide a registered email."
-        return render_template('link_existing_account.html', link_error=error_message)
+    if email != token_email:
+        error_message = "The given email does not match the one associated with the Google Account. Please provide the correct email."
+        return render_template('link_existing_account.html', link_error=error_message, google_email=token_email)
     
     correct_password = is_password_correct(email, password)
     if not correct_password:
         error_message = "The given password for the specified account is incorrect."
-        return render_template('link_existing_account.html', link_error=error_message)
+        return render_template('link_existing_account.html', link_error=error_message, google_email=token_email)
     
     make_user_federated(email)
     

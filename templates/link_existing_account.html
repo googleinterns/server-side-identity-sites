@@ -9,7 +9,7 @@
     {% endif %}
     <form  method="post" action={{url_for('link_existing_user')}}>
       <label for="email">Email:</label><br>
-      <input type="text" id="email" name="email"><br>
+      <input type="text" id="email" name="email", value={{google_email}}><br>
       <label for="lname">Password (Super Scure):</label><br>
       <input type="text" id="passwrd" name="passwrd"><br><br>
       <input type="submit" value="Submit">
