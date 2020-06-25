@@ -83,7 +83,7 @@ def make_user_federated(email):
     close_db(conn)
     
 
-@app.route('/', methods=['GET'])
+@app.route('/home', methods=['GET'])
 def home_page():
     """Display the home page of the site"""
     print("Demo home page")
@@ -122,7 +122,7 @@ def register_new_user():
         insert_user(fname, lname, email, state, password, federated=0)
         return render_template('account_success.html', name=fname, registration=str(True))
 
-
+@app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def display_login():
     """Display the user login page of the site"""
