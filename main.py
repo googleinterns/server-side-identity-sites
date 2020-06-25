@@ -242,3 +242,4 @@ def verify_id_token(token, client_id):
 
     except ValueError:
         return False
+    
