@@ -1,0 +1,18 @@
+<html lang="en">
+  <head>
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+  </head>
+  <body style="background-color:powderblue;">
+    <h1>Sign In to Link Account</h1>
+    {% if link_error %}
+      <h2>{{link_error}}</h2>
+    {% endif %}
+    <form  method="post" action={{url_for('link_existing_user')}}>
+      <label for="email">Email:</label><br>
+      <input type="text" id="email" name="email", value={{google_email}}><br>
+      <label for="lname">Password (Super Scure):</label><br>
+      <input type="text" id="passwrd" name="passwrd"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

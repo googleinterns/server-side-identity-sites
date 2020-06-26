@@ -1,22 +1,37 @@
 <html lang="en">
   <head>
-      <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body style="background-color:powderblue;">
-      {% if login_error %}
+    {% if login_error %}
       <h1>Login Error</h1>
       <h2>{{login_error}}</h2>
-      {% else %}
-      <h1>Exisitng User Sign In</h1>
-      {% endif %}
-      <form  method="post" action={{url_for('login_existing_user')}}>
-          <label for="lname">Username:</label><br>
-          <input type="text" id="usr" name="usr"><br>
-          <label for="lname">Password (Super Scure):</label><br>
-          <input type="text" id="passwrd" name="passwrd"><br><br>
-          <input type="submit" value="Submit Form">
-      </form>
-      <a href={{url_for('display_register')}} class="button">Register New Account Instead</a>
+    {% else %}
+      <h1>User Sign In</h1>
+    {% endif %}
+    <div id="g_id_onload"
+     data-client_id="443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
+     data-context="signin"
+     data-cancel_on_tap_outside="false"
+     data-login_uri="{{url_for('handle_google_sign_in')}}">
+    </div>
+    <form  method="post" action={{url_for('login_existing_user')}}>
+      <label for="email">Email:</label><br>
+      <input type="text" id="email" name="email"><br>
+      <label for="passwrd">Password (Super Secure):</label><br>
+      <input type="text" id="passwrd" name="passwrd"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    <div class="g_id_signin"
+     data-type="standard"
+     data-size="medium"
+     data-theme="outline"
+     data-text="signin_with"
+     data-shape="rectangular"
+     data-logo_alignment="left"
+     data-locale="" >
+    </div><br>
+    <a href={{url_for('display_register')}}>Create New Account</a>
   </body>
 </html>
-
