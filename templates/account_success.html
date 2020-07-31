@@ -2,16 +2,21 @@
   <head>
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
-  <body style="background-color:powderblue;">
-    {% if login %}
-      <h1>Login was successful! Welcome back, {{name}}!</h1>
-    {% elif registration %}
-      <h1>Registration was successful! Welcome, {{name}}!</h1>
-    {% elif link %}
-      <h1>Account Link was successful! Welcome back, {{name}}!</h1>
-    {% else %}
-      <h1>Unkown account access event, should never get here</h1>
-    {% endif %}
-    <a href={{url_for('display_login')}} class="button">Log Out</a>
+  <body style="background-image: url('static/network.jpeg');">
+    <div class="container">
+      {% if login %}
+        <h1>Welcome back, {{name}}!</h1>
+        <h2>Networkr is in development. Come back later for more content!</h2>
+      {% elif registration %}
+        <h1>Registration successful. Welcome, {{name}}!</h1>
+        <h2>Networkr is in development. Come back later for more content!</h2>
+      {% elif link %}
+        <h1>Account link successful. Welcome back, {{name}}!</h1>
+        <h2>Networkr is in development. Come back later for more content!</h2>
+      {% else %}
+        <h1>Unkown account access event, should never get here</h1>
+      {% endif %}
+      <a href={{url_for('display_login')}} class="button">Log Out</a>
+    </div>
   </body>
 </html>

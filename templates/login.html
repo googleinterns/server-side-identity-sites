@@ -3,35 +3,38 @@
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
-  <body style="background-color:powderblue;">
-    {% if login_error %}
-      <h1>Login Error</h1>
-      <h2>{{login_error}}</h2>
-    {% else %}
-      <h1>User Sign In</h1>
-    {% endif %}
+  <body style="background-image: url('static/network.jpeg');">
     <div id="g_id_onload"
      data-client_id="443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
      data-context="signin"
      data-cancel_on_tap_outside="false"
      data-login_uri="{{url_for('handle_google_sign_in')}}">
     </div>
-    <form  method="post" action={{url_for('login_existing_user')}}>
+    <form class="center-form" method="post" action={{url_for('login_existing_user')}}>
+      {% if login_error %}
+        <h1>Login Error</h1>
+        <h2>{{login_error}}</h2>
+      {% else %}
+        <h1>Sign In</h1>
+        <h2>Welcome back to Networkr</h2>
+      {% endif %}
       <label for="email">Email:</label><br>
       <input type="text" id="email" name="email"><br>
-      <label for="passwrd">Password (Super Secure):</label><br>
+      <label for="passwrd">Password:</label><br>
       <input type="text" id="passwrd" name="passwrd"><br><br>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Submit"><br>
+      <div class="g_id_signin"
+       data-type="standard"
+       data-size="medium"
+       data-theme="filled_black"
+       data-text="signin_with"
+       data-shape="rectangular"
+       data-logo_alignment="left"
+       data-width="300"
+       data-locale="" >
+      </div><br>
+      New user?
+      <a href={{url_for('display_register')}}>Create an account.</a>
     </form>
-    <div class="g_id_signin"
-     data-type="standard"
-     data-size="medium"
-     data-theme="outline"
-     data-text="signin_with"
-     data-shape="rectangular"
-     data-logo_alignment="left"
-     data-locale="" >
-    </div><br>
-    <a href={{url_for('display_register')}}>Create New Account</a>
   </body>
 </html>

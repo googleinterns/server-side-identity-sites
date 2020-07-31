@@ -2,13 +2,17 @@
   <head>
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
-  <body style="background-color:powderblue;">
-    {% if error %}
-      <h1>{{error}}</h1>
-    {% else %}
-      <h1>Demo Website Home Page</h1>
-    {% endif %}
-    <a href={{url_for('display_register')}} class="button">Sign Up</a>
-    <a href={{url_for('display_login')}} class="button">Login</a>
+  <body style="background-image: url('static/network.jpeg');">
+    <div class="container">
+      {% if error %}
+        <h1>Networkr</h1>
+        <h2>{{error}}</h2>
+      {% else %}
+        <h1>Welcome to Networkr</h1>
+      {% endif %}
+      <a href={{url_for('display_register')}} class="button">Sign Up</a>
+      <a href={{url_for('display_login')}} class="button">Login</a>
+      <br>
+    </div>
   </body>
 </html>

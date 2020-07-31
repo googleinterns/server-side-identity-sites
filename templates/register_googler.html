@@ -2,17 +2,16 @@
   <head>
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
-  <body style="background-color:powderblue;">
-    {% if reg_error %}
-      <h1>Registration Error</h1>
-      <h2>{{reg_error}}</h2>
-    {% else %}
-      <h1>Google Account Registration</h1>
-      <h2>Please provide the following information to complete your registration:</h2>
-    {% endif %}
-      
-    <form  method="post" action={{url_for('register_new_googler')}}>
-      <label for="passwrd">Password (Super Secure):</label><br>
+  <body style="background-image: url('static/network.jpeg');">
+    <form class="center-form" method="post" action={{url_for('register_new_googler')}}>
+      {% if reg_error %}
+        <h1>Registration Error</h1>
+        <h2>{{reg_error}}</h2>
+      {% else %}
+        <h1>Google Account Registration</h1>
+        <h2>Please provide the following information to complete your registration:</h2>
+      {% endif %}
+      <label for="passwrd">Password:</label><br>
       <input type="text" id="passwrd" name="passwrd"><br>
       <label for="state">State:</label><br>
       <input type="text" id="state" name="state"><br><br>
