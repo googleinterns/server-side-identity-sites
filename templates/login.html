@@ -1,5 +1,7 @@
 <html lang="en">
   <head>
+    <title>Networkr | Sign In</title>
+    <link rel="shortcut icon" type="image/png" href="static/favicon.png">
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
@@ -10,7 +12,7 @@
      data-cancel_on_tap_outside="false"
      data-login_uri="{{url_for('handle_google_sign_in')}}">
     </div>
-    <form class="center-form" method="post" action={{url_for('login_existing_user')}}>
+    <form class="center-form" method="post" action={{url_for('login_existing_user')}} autocomplete="off">
       {% if login_error %}
         <h1>Login Error</h1>
         <h2>{{login_error}}</h2>
