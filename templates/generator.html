@@ -1,0 +1,45 @@
+<html lang="en">
+  <head>
+    <title>Networkr | Generator</title>
+    <link rel="shortcut icon" type="image/png" href="static/favicon.png">
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+  </head>
+  <body style="background-image: url('static/network.jpeg');">
+    {% if code %}
+    <div class="codeblock">
+      <pre>
+          {{code}}
+      </pre>
+    </div>
+    <form class="left-form" method="post" action={{url_for('generate_code')}} autocomplete="off">
+      <h1>Sign In Integration Code Generator</h1>
+      <label for="client">Client ID:</label><br>
+      <input type="text" id="client" name="client" value="{{client_id}}"><br>
+      <label for="domain">G Suite Domain (optional):</label><br>
+      <input type="text" id="domain" name="domain" value="{{g_suite}}"><br>
+      <label for="certs">Cache Certificates?</label><br>
+      <select type="select" id="certs" name="certs">
+        <option value="" selected disabled hidden>Choose value</option>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    {% else %}
+    <form class="center-form" method="post" action={{url_for('generate_code')}} autocomplete="off">
+      <h1>Sign In Integration Code Generator</h1>
+      <label for="client">Client ID:</label><br>
+      <input type="text" id="client" name="client"><br>
+      <label for="domain">G Suite Domain (optional):</label><br>
+      <input type="text" id="domain" name="domain"><br>
+      <label for="certs">Cache Certificates?</label><br>
+      <select type="select" id="certs" name="certs">
+        <option value="" selected disabled hidden>Choose value</option>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    {% endif %}
+  </body>
+</html>

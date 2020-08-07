@@ -100,6 +100,71 @@ def display_register():
     return render_template('register.html')
 
 
+@app.route('/generator', methods=['GET'])
+def display_generator():
+    """Display the code generation page of the site"""
+    print("Code Generation page")
+    return render_template('generator.html')
+
+
+@app.route('/generator', methods=['POST'])
+def generate_code():
+    """Generate the code given the user's input"""
+    print("Generating Code")
+    client_id = request.values.get('client')
+    print(client_id)
+    g_suite_domain = request.values.get('domain')
+    cert = request.values.get('certs')
+    
+    if cert == 'yes':
+        cert_bool = 'True'
+    else:
+        cert_bool = 'False'
+    
+    if g_suite_domain:
+        code = """
+from gsi.verification import verifiers
+
+#receive id_token from login endpoint
+
+CLIENT_APP_IDS = [{}]
+G_SUITE_DOMAIN = {}
+verifier = verifiers.GoogleOauth2Verifier(client_ids=CLIENT_APP_IDS,
+                                          g_suite_hosted_domain=G_SUITE_DOMAIN,
+                                          cache_certs={})
+
+try:
+    decoded_token = verifier.verify_token(id_token)
+    #use decoded_token to complete user sign in
+
+except ValueError:
+    #invalid token, prompt user to try again
+""".format(client_id, g_suite_domain, cert_bool)
+        return render_template('generator.html', code=code, client_id=client_id, 
+                               g_suite=g_suite_domain)
+        
+        
+    else:
+        code = """
+from gsi.verification import verifiers
+
+#receive id_token from login endpoint
+
+CLIENT_APP_IDS = [{}]
+verifier = verifiers.GoogleOauth2Verifier(client_ids=CLIENT_APP_IDS,
+                                          cache_certs={})
+
+try:
+    decoded_token = verifier.verify_token(id_token)
+    #use decoded_token to complete user sign in
+
+except ValueError:
+    #invalid token, prompt user to try again
+""".format(client_id, cert_bool)
+        return render_template('generator.html', code=code, client_id=client_id, 
+                               g_suite=g_suite_domain, cert=cert)
+    
+
 @app.route('/register-user', methods=['POST'])
 def register_new_user():
     """Register a new user with the given information"""
@@ -188,7 +253,7 @@ def handle_google_sign_in():
     elif registered:
         session['decoded_token'] = user_info.to_json()
         error_message = ("The email associated with this Google account is already registered. " 
-                         "Please link this existing account to your Google account or sign in without Google")
+                         "Please link this existing account to your Google account.")
         return render_template('link_existing_account.html', link_error=error_message, google_email=email)
     else:
         session['decoded_token'] = user_info.to_json() #session value must be serializable
