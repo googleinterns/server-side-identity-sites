@@ -1,8 +1,12 @@
 import sqlite3
+import sys
 
 from flask import Flask, request, render_template, session, url_for
-from google.auth.transport import requests
-from google.oauth2 import id_token
+
+sys.path.append('../server-side-identity')
+from gsi.verification import verifiers
+from gsi.verification import exceptions
+sys.path.append('../server-side-identity-sites')
 
 _DB = './database.db'
 _CLIENT_ID = "443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"
@@ -97,6 +101,65 @@ def display_register():
     return render_template('register.html')
 
 
+@app.route('/generator', methods=['GET'])
+def display_generator():
+    """Display the code generation page of the site"""
+    print("Code Generation page")
+    return render_template('generator.html')
+
+
+@app.route('/generator', methods=['POST'])
+def generate_code():
+    """Generate the code given the user's input"""
+    print("Generating Code")
+    client_id = request.values.get('client')
+    print(client_id)
+    g_suite_domain = request.values.get('domain')
+    
+    if g_suite_domain:
+        code = """
+from gsi.verification import verifiers
+from gsi.verification import exceptions
+
+#receive id_token from login endpoint
+
+CLIENT_APP_IDS = ["{}"]
+G_SUITE_DOMAIN = "{}"
+verifier = verifiers.GoogleOauth2Verifier(client_ids=CLIENT_APP_IDS,
+                                          g_suite_hosted_domain=G_SUITE_DOMAIN)
+
+try:
+    decoded_token = verifier.verify_token(id_token)
+    #use decoded_token to complete user sign in
+
+except (ValueError, exceptions.GoogleVerificationError):
+    #invalid token, prompt user to try again
+""".format(client_id, g_suite_domain)
+        return render_template('generator.html', code=code, client_id=client_id, 
+                               g_suite=g_suite_domain)
+        
+        
+    else:
+        code = """
+from gsi.verification import verifiers
+from gsi.verification import exceptions
+
+#receive id_token from login endpoint
+
+CLIENT_APP_IDS = ["{}"]
+verifier = verifiers.GoogleOauth2Verifier(client_ids=CLIENT_APP_IDS)
+
+try:
+    decoded_token = verifier.verify_token(id_token)
+    #use decoded_token to complete user sign in
+
+except (ValueError, exceptions.GoogleVerificationError):
+    #invalid token, prompt user to try again
+""".format(client_id)
+        return render_template('generator.html', code=code, client_id=client_id, 
+                               g_suite=g_suite_domain)
+    
+
 @app.route('/register-user', methods=['POST'])
 def register_new_user():
     """Register a new user with the given information"""
@@ -156,7 +219,8 @@ def login_existing_user():
 @app.route('/gsi-token', methods=['POST'])
 def handle_google_sign_in():
     """Handle signing in when Google sends the token to our server directly"""
-    print('Handling User Request from OneTap')
+    print('Handling User Request from Google Button or OneTap')
+    
     #Verify CSRF double submit cookie
     csrf_token_cookie = request.cookies.get('g_csrf_token')
     if not csrf_token_cookie:
@@ -168,39 +232,51 @@ def handle_google_sign_in():
     
     if csrf_token_body != csrf_token_cookie:
         return render_template('home.html', error="Google Sign In failed. Failed to verify double submit cookie.")
+    
+    id_token = request.values.get('credential')
+    
+    CLIENT_APP_IDS = ["443130310905-s9hq5vg9nbjctal1dlm2pf8ljb9vlbm3.apps.googleusercontent.com"] #CLIENT IDs of apps using this backend
+    verifier = verifiers.GoogleOauth2Verifier(client_ids=CLIENT_APP_IDS)
 
-    token = request.values.get('credential')
-    user_info = verify_id_token(token, _CLIENT_ID)
+    try:
+        decoded_token = verifier.verify_token(id_token) #use decoded_token to complete user sign in
+        
+        email = decoded_token.get_email().lower()
+        given_name = decoded_token.get_given_name()
+        
+        create_user_table()
+        registered = is_email_registered(email)
+        federated = is_account_federated(email)
+        
+        if registered:
+            
+            if federated:
+                return render_template('account_success.html', name=given_name, login=str(True))
+            
+            else: #legacy user - link accounts
+                session['decoded_token'] = decoded_token.to_json()
+                error_message = ("The email associated with this Google account is already registered. " 
+                             "Please link this existing account to your Google account.")
+                return render_template('link_existing_account.html', link_error=error_message, google_email=email)
+            
+        else: #unregistered user
+            session['decoded_token'] = decoded_token.to_json() #session value must be serializable
+            return render_template('register_googler.html')
 
-    if not user_info:
+    except (ValueError, exceptions.GoogleVerificationError):
+        #invalid token, prompt user to try again
         return render_template('home.html', error="Google Sign In failed. The ID Token was invalid.")
-    
-    email = user_info['email'].lower()
-    create_user_table()
-    registered = is_email_registered(email)
-    federated = is_account_federated(email)
-    
-    if federated:
-        return render_template('account_success.html', name=user_info['given_name'], login=str(True))
-    elif registered:
-        session['decoded_token'] = user_info
-        error_message = ("The email associated with this Google account is already registered. " 
-                         "Please link this existing account to your Google account or sign in without Google")
-        return render_template('link_existing_account.html', link_error=error_message, google_email=email)
-    else:
-        session['decoded_token'] = user_info
-        return render_template('register_googler.html')
 
 
 @app.route('/register-googler', methods=['POST'])
 def register_new_googler():
     """Register the new Google account in the federated database using the provided information"""
-    user_info = session['decoded_token']
+    user_info = verifiers.GoogleDecodedToken(session['decoded_token']) #json to DecodedToken object
     state = request.values.get('state')
     password = request.values.get('passwrd')
-    first_name = user_info['given_name']
-    last_name = user_info['family_name']
-    email = user_info['email'].lower()
+    first_name = user_info.get_given_name()
+    last_name = user_info.get_family_name()
+    email = user_info.get_email().lower()
     
     create_user_table()
     insert_user(first_name, last_name, email, state, password, federated=1)
@@ -211,8 +287,8 @@ def register_new_googler():
 @app.route('/link-login', methods=['POST'])
 def link_existing_user():
     """Attempt to link an existing account to a Google account"""
-    user_info = session['decoded_token']
-    token_email = user_info['email'].lower()
+    user_info = verifiers.GoogleDecodedToken(session['decoded_token']) #json to DecodedToken object
+    token_email = user_info.get_email().lower()
     email = request.values.get('email').lower()
     password = request.values.get('passwrd')
     
@@ -229,17 +305,3 @@ def link_existing_user():
     
     return render_template('account_success.html', name=get_first_name(email), link=str(True))
 
-
-def verify_id_token(token, client_id):
-    """Verify that a given id_token is valid and return the decoded user information if it is valid"""
-    print("Begin Token Verification")
-    try:
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), client_id)
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-            raise ValueError("Wrong Issuer")
-
-        return idinfo
-
-    except ValueError:
-        return False
-    

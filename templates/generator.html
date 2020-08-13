@@ -1,0 +1,32 @@
+<html lang="en">
+  <head>
+    <title>Code Generator</title>
+    <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
+  </head>
+  <body style="background-image: url('static/generator_blue.png');">
+    {% if code %}
+    <div class="codeblock">
+      <pre>
+          {{code}}
+      </pre>
+    </div>
+    <form class="left-form" method="post" action={{url_for('generate_code')}} autocomplete="off" spellcheck="false">
+      <h1>Sign In Integration Code Generator</h1>
+      <label for="client">Client ID:</label><br>
+      <input type="text" id="client" name="client" value="{{client_id}}"><br>
+      <label for="domain">G Suite Domain (optional):</label><br>
+      <input type="text" id="domain" name="domain" value="{{g_suite}}"><br>
+      <input type="submit" value="Generate Code">
+    </form>
+    {% else %}
+    <form class="center-form" method="post" action={{url_for('generate_code')}} autocomplete="off" spellcheck="false">
+      <h1>Sign In Integration Code Generator</h1>
+      <label for="client">Client ID:</label><br>
+      <input type="text" id="client" name="client"><br>
+      <label for="domain">G Suite Domain (optional):</label><br>
+      <input type="text" id="domain" name="domain"><br>
+      <input type="submit" value="Generate Code">
+    </form>
+    {% endif %}
+  </body>
+</html>

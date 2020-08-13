@@ -1,27 +1,31 @@
 <html lang="en">
   <head>
+    <title>Networkr | Register</title>
+    <link rel="shortcut icon" type="image/png" href="static/favicon.png">
     <link href={{url_for('static', filename='style.css')}} rel="stylesheet">
   </head>
-  <body style="background-color:powderblue;">
-    {% if reg_error %}
-      <h1>Registration Error</h1>
-      <h2>{{reg_error}}</h2>
-    {% else %}
-      <h1>Account Registration</h1>
-    {% endif %}
-    <form  method="post" action={{url_for('register_new_user')}}>
+  <body style="background-image: url('static/network.jpeg');">
+    <form class="center-form" method="post" action={{url_for('register_new_user')}} autocomplete="off">
+      {% if reg_error %}
+        <h1>Registration Error</h1>
+        <h2>{{reg_error}}</h2>
+      {% else %}
+        <h1>Networkr</h1>
+        <h2>Sign up for the new social network</h2>
+      {% endif %}
       <label for="fname">First Name:</label><br>
       <input type="text" id="fname" name="fname"><br>
       <label for="lname">Last Name:</label><br>
       <input type="text" id="lname" name="lname"><br>
       <label for="email">Email:</label><br>
       <input type="text" id="email" name="email"><br>
-      <label for="passwrd">Password (Super Secure):</label><br>
+      <label for="passwrd">Password:</label><br>
       <input type="text" id="passwrd" name="passwrd"><br>
-      <label for="state">City:</label><br>
+      <label for="state">State:</label><br>
       <input type="text" id="state" name="state"><br><br>
       <input type="submit" value="Submit">
+      Already have an account?
+      <a href={{url_for('display_login')}}>Sign in.</a>
     </form>
-    <a href={{url_for('display_login')}}>Sign In Instead</a>
   </body>
 </html>
