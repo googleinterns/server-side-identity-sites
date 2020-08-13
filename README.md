@@ -26,10 +26,10 @@ This will run the server which will begin serving content at the default port 50
 Once the server is running, open any browser and navigate to http://localhost:5000/. This will bring you to the home page of the Networkr mock website. From there, you can practice making making and logging into accounts either traditionally or through Google Sign In.
 
 ## Accessing the code Generator
-Once the server is running, open any browser and navigate to http://localhost:5000/generator. This will bring you to the input form for the server side code generator. Enter your desired parameters and generate your code which will be displayed on the right.
+Once the server is running, open any browser and navigate to http://localhost:5000/generator. This will bring you to the input form for the server-side code generator. Enter your desired parameters and generate your code which will be displayed on the right.
 
 ## Closing the Server
-Once you've finished navigating Networkr and the code generator, you can terminate the server by executing Ctrl + C in the terminal
+Once you've finished navigating Networkr and the code generator, you can terminate the server by executing Ctrl + C in the terminal.
 
 
 ### Disclaimer
